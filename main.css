@@ -1,4 +1,6 @@
-.table, th, td {
+.table,
+th,
+td {
     border: 1px solid #ddd;
 }
 
@@ -7,5 +9,9 @@
 }
 
 #OneVehicleForm {
+    margin-top: 50px;
+}
+
+#editForm {
     margin-top: 50px;
 }

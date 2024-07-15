@@ -12,15 +12,12 @@
 <body>
     <form id="vehicleForm">
         <div class="form-group" id="createVehicleForm">
-            <label for="Manufacturer">Manufacturer</label>
             <input type="text" class="form-control" id="manufacturer" placeholder="Manufacturer">
         </div>
         <div class="form-group">
-            <label for="Model">Model</label>
             <input type="text" class="form-control" id="model" placeholder="Model">
         </div>
         <div class="form-group">
-            <label for="Release Year">Release Year</label>
             <input type="text" class="form-control" id="releaseYear" placeholder="Release Year">
         </div>
     </form>
@@ -28,14 +25,21 @@
     <table class="table" id="listOfVehicles">
         <thead>
             <tr>
+                <th scope="col">ID</th>
                 <th scope="col">Manufacturer</th>
                 <th scope="col">Model</th>
                 <th scope="col">Release Year</th>
+                <th scope="col">Actions</th>
             </tr>
         </thead>
         <tbody>
         </tbody>
     </table>
+
+    <form id="editForm">
+
+    </form>
+
     <form id="OneVehicleForm">
         <div class="form-group" id="getVehicleForm">
             <label for="ID">ID</label>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autoservisas</title>
+    <link rel="stylesheet" href="./main.css">
+    <script defer src="main.js"></script>
+</head>
+
+<body>
+    <form id="vehicleForm">
+        <div class="form-group" id="createVehicleForm">
+            <label for="Manufacturer">Manufacturer</label>
+            <input type="text" class="form-control" id="manufacturer" placeholder="Manufacturer">
+        </div>
+        <div class="form-group">
+            <label for="Model">Model</label>
+            <input type="text" class="form-control" id="model" placeholder="Model">
+        </div>
+        <div class="form-group">
+            <label for="Release Year">Release Year</label>
+            <input type="text" class="form-control" id="releaseYear" placeholder="Release Year">
+        </div>
+    </form>
+    <button type="button" class="btn btn-success" id="submitNewVehicle">Submit</button>
+    <table class="table" id="listOfVehicles">
+        <thead>
+            <tr>
+                <th scope="col">Manufacturer</th>
+                <th scope="col">Model</th>
+                <th scope="col">Release Year</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+    <form id="OneVehicleForm">
+        <div class="form-group" id="getVehicleForm">
+            <label for="ID">ID</label>
+            <input type="text" class="form-control" id="vehicleIdInput" placeholder="ID">
+        </div>
+    </form>
+    <button type="button" class="btn btn-success" id="getVehicle">Submit</button>
+    <div class="card" id="vehicleCard">
+        <div class="card-body">
+
+        </div>
+    </div>
+
+</body>
+
+</html>

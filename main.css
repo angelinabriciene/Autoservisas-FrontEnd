@@ -1,0 +1,11 @@
+.table, th, td {
+    border: 1px solid #ddd;
+}
+
+#listOfVehicles {
+    margin-top: 50px;
+}
+
+#OneVehicleForm {
+    margin-top: 50px;
+}

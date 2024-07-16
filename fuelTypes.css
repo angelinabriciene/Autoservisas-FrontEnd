@@ -1,0 +1,30 @@
+#header {
+    margin-top: 20px;
+    font-weight: 900;
+    font-size: large;
+    display: inline-block;
+    background-color: black;
+    color: #ddd;
+}
+
+.table,
+th,
+td {
+    border: 1px solid #ddd;
+}
+
+#listOfFuelTypes {
+    margin-top: 50px;
+}
+
+#OneFuelTypeForm {
+    margin-top: 50px;
+}
+
+#fuelTypeForm {
+    margin-top: 30px;
+}
+
+#fuelForm {
+    margin-top: 50px;
+}

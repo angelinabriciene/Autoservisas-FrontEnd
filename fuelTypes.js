@@ -1,41 +1,37 @@
-document.getElementById('submitNewVehicle').addEventListener('click', () => {
-    console.log("Paspaustas submit");
-    createVehicle(document.getElementById('vehicleForm'));
+document.getElementById('submitNewFuelType').addEventListener('click', (event) => {
+    event.preventDefault();
+    createFuelType(document.getElementById('fuelForm'));
 });
 
-document.getElementById('getVehicle').addEventListener('click', () => {
-    getVehicle(document.getElementById('OneVehicleForm'));
+document.getElementById('getFuelType').addEventListener('click', () => {
+    getFuelType(document.getElementById('OneFuelTypeForm'));
 });
 
 function showAlert(message) {
     alert(message);
 }
 
-getVehicles();
+getFuelTypes();
 
-function createVehicleList(container, data) {
-    const tableBody = document.getElementById("listOfVehicles").getElementsByTagName("tbody")[0];
+function createFuelTypesList(container, data) {
+    const tableBody = document.getElementById("listOfFuelTypes").getElementsByTagName("tbody")[0];
     tableBody.innerHTML = "";
 
-    data.forEach(vehicle => {
+    data.forEach(fuelType => {
         const row = tableBody.insertRow();
         const idCell = row.insertCell();
-        const manufacturerCell = row.insertCell();
-        const modelCell = row.insertCell();
-        const releaseYearCell = row.insertCell();
+        const fuelTypeCell = row.insertCell();
         const actionCell = row.insertCell();
 
-        idCell.innerHTML = vehicle.id;
-        manufacturerCell.innerHTML = vehicle.manufacturer;
-        modelCell.innerHTML = vehicle.model;
-        releaseYearCell.innerHTML = vehicle.releaseYear;
+        idCell.innerHTML = fuelType.id;
+        fuelTypeCell.innerHTML = fuelType.fuelType;
 
         const updateButton = document.createElement("button");
         updateButton.type = "button";
         updateButton.className = "btn btn-primary";
         updateButton.innerHTML = "Update";
         updateButton.onclick = function () {
-            updateVehicle(vehicle.id);
+            updateFuelType(fuelType.id);
         };
 
         const deleteButton = document.createElement("button");
@@ -43,7 +39,7 @@ function createVehicleList(container, data) {
         deleteButton.className = "btn btn-danger";
         deleteButton.innerHTML = "Delete";
         deleteButton.onclick = function () {
-            deleteVehicle(vehicle.id);
+            deleteFuelType(fuelType.id);
         };
 
         actionCell.appendChild(updateButton);
@@ -51,15 +47,15 @@ function createVehicleList(container, data) {
     });
 }
 
-function getVehicles() {
-    fetch("http://127.0.0.1:8000/getVehicles")
+function getFuelTypes() {
+    fetch("http://127.0.0.1:8000/getFuelTypes")
         .then(response => response.json())
         .then(data => {
-            createVehicleList(document.getElementById("listOfVehicles"), data);
+            createFuelTypesList(document.getElementById("listOfFuelTypes"), data);
         });
 }
 
-function getVehicle(form) {
+function getFuelType(form) {
     if (!(form instanceof HTMLFormElement)) {
         console.error("Invalid form element:", form);
         return;
@@ -69,8 +65,8 @@ function getVehicle(form) {
     inputs.forEach(input => {
         formData[input.id] = input.value;
     });
-    const vehicleId = formData.vehicleIdInput;
-    fetch(`http://127.0.0.1:8000/getVehicle?id=${vehicleId}`, {
+    const fuelTypeId = formData.fuelTypeIdInput;
+    fetch(`http://127.0.0.1:8000/getFuelType?id=${fuelTypeId}`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json"
@@ -78,20 +74,20 @@ function getVehicle(form) {
     })
         .then(response => response.json())
         .then(data => {
-            const cardBody = document.getElementById("vehicleCard").getElementsByClassName("card-body")[0];
+            const cardBody = document.getElementById("fuelTypeCard").getElementsByClassName("card-body")[0];
             cardBody.innerHTML = "";
 
-            const vehicleHTML = `
-                <h1 class="card-title">${data.manufacturer} ${data.model} ${data.releaseYear}</h1>`;
-            cardBody.innerHTML = vehicleHTML;
+            const fuelTypeHTML = `
+                <h1 class="card-title">${data.fuelType}</h1>`;
+            cardBody.innerHTML = fuelTypeHTML;
         })
         .catch(error => {
-            console.error("Error getting vehicle:", error);
+            console.error("Error getting fuel type:", error);
             showAlert("Klaida: negalima gauti įrašo");
         });
 }
 
-function createVehicle(form) {
+function createFuelType(form) {
     if (!(form instanceof HTMLFormElement)) {
         console.error("Invalid form element:", form);
         return;
@@ -102,10 +98,9 @@ function createVehicle(form) {
 
     inputs.forEach(input => {
         formData[input.id] = input.value;
-        console.log("inputas", formData);
     });
 
-    fetch(`http://127.0.0.1:8000/createVehicle`, {
+    fetch(`http://127.0.0.1:8000/createFuelType`, {
         method: "POST",
         body: JSON.stringify(formData),
         headers: {
@@ -116,21 +111,21 @@ function createVehicle(form) {
             if (response.ok) {
                 showAlert("Įrašas sukurtas");
                 form.reset();
-                getVehicles();
+                getFuelTypes();
             } else {
                 showAlert("Klaida: negalima sukurti įrašo");
             }
         })
         .catch(error => {
-            console.error("Error creating vehicle:", error);
+            console.error("Error creating fuel type:", error);
             showAlert("Klaida: negalima sukurti įrašo");
         });
 }
 
-function deleteVehicle(vehicleId) {
-    fetch(`http://127.0.0.1:8000/deleteVehicle`, {
+function deleteFuelType(fuelTypeId) {
+    fetch(`http://127.0.0.1:8000/deleteFuelType`, {
         method: "POST",
-        body: JSON.stringify({ id: vehicleId }),
+        body: JSON.stringify({ id: fuelTypeId }),
         headers: {
             "Content-Type": "application/json"
         }
@@ -138,18 +133,18 @@ function deleteVehicle(vehicleId) {
         .then(response => {
             if (response.ok) {
                 showAlert("Įrašas ištrintas");
-                getVehicles();
+                getFuelTypes();
             } else {
-                showAlert("Klaida: negalima sukurti įrašo");
+                showAlert("Klaida: negalima ištrinti įrašo");
             }
         })
         .catch(error => {
-            console.error("Error deleting vehicle:", error);
+            console.error("Error deleting fuel type:", error);
         });
 }
 
-function updateVehicle(vehicleId) {
-    fetch(`http://127.0.0.1:8000/getVehicle?id=${vehicleId}`, {
+function updateFuelType(fuelTypeId) {
+    fetch(`http://127.0.0.1:8000/getFuelType?id=${fuelTypeId}`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json"
@@ -157,32 +152,25 @@ function updateVehicle(vehicleId) {
     })
         .then(response => response.json())
         .then(data => {
-            const editForm = document.getElementById("editForm");
-            editForm.innerHTML = `
+            const editFormContainer = document.getElementById("editFuelTypeForm");
+            editFormContainer.innerHTML = `
                 <div class="form-group">
-                    <label for="manufacturer">Manufacturer</label>
-                    <input type="text" class="form-control" id="manufacturer" value="${data.manufacturer}">
+                    <label for="fuelType">fuel type</label>
+                    <input type="text" class="form-control" id="fuelType" value="${data.fuelType}">
                 </div>
-                <div class="form-group">
-                    <label for="model">Model</label>
-                    <input type="text" class="form-control" id="model" value="${data.model}">
-                </div>
-                <div class="form-group">
-                    <label for="releaseYear">Release Year</label>
-                    <input type="text" class="form-control" id="releaseYear" value="${data.releaseYear}">
-                </div>
-                <button type="button" class="btn btn-success" id="submitUpdateVehicle">Update</button>
+                <button type="button" class="btn btn-success" id="submitUpdateFuelType">Update</button>
             `;
 
-            document.getElementById("submitUpdateVehicle").addEventListener('click', () => {
+            document.getElementById("submitUpdateFuelType").addEventListener('click', (event) => {
+                event.preventDefault();
                 let formData = {};
-                const inputs = editForm.querySelectorAll('input');
+                const inputs = editFormContainer.querySelectorAll('input');
                 inputs.forEach(input => {
                     formData[input.id] = input.value;
                 });
-                formData.id = vehicleId;
+                formData.id = fuelTypeId;
 
-                fetch(`http://127.0.0.1:8000/updateVehicle`, {
+                fetch(`http://127.0.0.1:8000/updateFuelType`, {
                     method: "POST",
                     body: JSON.stringify(formData),
                     headers: {
@@ -192,19 +180,19 @@ function updateVehicle(vehicleId) {
                     .then(response => {
                         if (response.ok) {
                             showAlert("Įrašas atnaujintas");
-                            getVehicles();
-                            document.getElementById("editForm").innerHTML = "";
+                            getFuelTypes();
+                            document.getElementById("editFuelTypeForm").innerHTML = "";
                         } else {
                             showAlert("Klaida: negalima atnaujinti įrašo");
                         }
                     })
                     .catch(error => {
-                        console.error("Error updating vehicle:", error);
+                        console.error("Error updating fuel type:", error);
                     });
             });
         })
         .catch(error => {
-            console.error("Error getting vehicle:", error);
+            console.error("Error getting fuel type:", error);
             showAlert("Klaida: negalima gauti įrašo");
         });
 }

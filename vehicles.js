@@ -1,10 +1,5 @@
 document.getElementById('submitNewVehicle').addEventListener('click', () => {
-    console.log("Paspaustas submit");
     createVehicle(document.getElementById('vehicleForm'));
-});
-
-document.getElementById('getVehicle').addEventListener('click', () => {
-    getVehicle(document.getElementById('OneVehicleForm'));
 });
 
 function showAlert(message) {
@@ -12,6 +7,7 @@ function showAlert(message) {
 }
 
 getVehicles();
+getFuelTypesForVehicleCreate();
 
 function createVehicleList(container, data) {
     const tableBody = document.getElementById("listOfVehicles").getElementsByTagName("tbody")[0];
@@ -19,16 +15,24 @@ function createVehicleList(container, data) {
 
     data.forEach(vehicle => {
         const row = tableBody.insertRow();
-        const idCell = row.insertCell();
         const manufacturerCell = row.insertCell();
         const modelCell = row.insertCell();
         const releaseYearCell = row.insertCell();
+        const fuelCell = row.insertCell();
         const actionCell = row.insertCell();
 
-        idCell.innerHTML = vehicle.id;
         manufacturerCell.innerHTML = vehicle.manufacturer;
         modelCell.innerHTML = vehicle.model;
         releaseYearCell.innerHTML = vehicle.releaseYear;
+        fuelCell.innerHTML = vehicle.fuelType.fuelType;
+
+        const detailButton = document.createElement("button");
+        detailButton.type = "button";
+        detailButton.className = "btn btn-secondary";
+        detailButton.innerHTML = "More";
+        detailButton.onclick = function () {
+            getVehicle(vehicle.id);
+        };
 
         const updateButton = document.createElement("button");
         updateButton.type = "button";
@@ -45,7 +49,7 @@ function createVehicleList(container, data) {
         deleteButton.onclick = function () {
             deleteVehicle(vehicle.id);
         };
-
+        actionCell.appendChild(detailButton);
         actionCell.appendChild(updateButton);
         actionCell.appendChild(deleteButton);
     });
@@ -59,18 +63,8 @@ function getVehicles() {
         });
 }
 
-function getVehicle(form) {
-    if (!(form instanceof HTMLFormElement)) {
-        console.error("Invalid form element:", form);
-        return;
-    }
-    let formData = {};
-    const inputs = form.querySelectorAll('input');
-    inputs.forEach(input => {
-        formData[input.id] = input.value;
-    });
-    const vehicleId = formData.vehicleIdInput;
-    fetch(`http://127.0.0.1:8000/getVehicle?id=${vehicleId}`, {
+function getVehicle(vehicleId) {
+    fetch(`http://127.0.0.1:8000/getVehicleWithRelations?id=${vehicleId}`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json"
@@ -82,7 +76,7 @@ function getVehicle(form) {
             cardBody.innerHTML = "";
 
             const vehicleHTML = `
-                <h1 class="card-title">${data.manufacturer} ${data.model} ${data.releaseYear}</h1>`;
+                <h1 class="card-title">${data.manufacturer} ${data.model} ${data.releaseYear} ${data.fuelType.fuelType}</h1>`;
             cardBody.innerHTML = vehicleHTML;
         })
         .catch(error => {
@@ -99,11 +93,12 @@ function createVehicle(form) {
 
     let formData = {};
     const inputs = form.querySelectorAll('input');
+    const fuelTypeSelect = form.querySelector('select'); 
 
     inputs.forEach(input => {
         formData[input.id] = input.value;
-        console.log("inputas", formData);
     });
+    formData.fuelTypeId = fuelTypeSelect.value;
 
     fetch(`http://127.0.0.1:8000/createVehicle`, {
         method: "POST",
@@ -171,16 +166,26 @@ function updateVehicle(vehicleId) {
                     <label for="releaseYear">Release Year</label>
                     <input type="text" class="form-control" id="releaseYear" value="${data.releaseYear}">
                 </div>
+                <div class="form-group">
+                    <label for="fuelType">Fuel Type</label>
+                    <select class="form-control" id="fuelTypeSelect">
+                        <option value=""></option>
+                    </select>
+                </div>
                 <button type="button" class="btn btn-success" id="submitUpdateVehicle">Update</button>
             `;
+            getFuelTypesForVehicleEdit();
 
             document.getElementById("submitUpdateVehicle").addEventListener('click', () => {
                 let formData = {};
                 const inputs = editForm.querySelectorAll('input');
+                const fuelTypeSelect = editForm.querySelector('select');
+
                 inputs.forEach(input => {
                     formData[input.id] = input.value;
                 });
                 formData.id = vehicleId;
+                formData.fuelTypeId = fuelTypeSelect.value;
 
                 fetch(`http://127.0.0.1:8000/updateVehicle`, {
                     method: "POST",

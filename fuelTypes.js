@@ -1,17 +1,49 @@
-document.getElementById('submitNewFuelType').addEventListener('click', (event) => {
-    event.preventDefault();
-    createFuelType(document.getElementById('fuelForm'));
-});
+if (window.location.href.includes("fuelTypes")) {
+    document.getElementById('submitNewFuelType').addEventListener('click', (event) => {
+        event.preventDefault();
+        createFuelType(document.getElementById('fuelForm'));
+    });
 
-document.getElementById('getFuelType').addEventListener('click', () => {
-    getFuelType(document.getElementById('OneFuelTypeForm'));
-});
-
+    document.getElementById('getFuelType').addEventListener('click', () => {
+        getFuelType(document.getElementById('OneFuelTypeForm'));
+    });
+    getFuelTypes();
+}
 function showAlert(message) {
     alert(message);
 }
 
-getFuelTypes();
+function getFuelTypesForVehicleEdit() {
+    let fuelTypesHTML = '';
+    fetch("http://127.0.0.1:8000/getFuelTypes")
+        .then(response => response.json())
+        .then(data => {
+            data.forEach(fuelType => {
+                fuelTypesHTML += `<option value="${fuelType.id}">${fuelType.fuelType}</option>`;
+            });
+            document.getElementById("fuelTypeSelect").innerHTML = fuelTypesHTML;
+        })
+        .catch(error => {
+            console.error("Error getting fuel types:", error);
+        });
+}
+
+function createFuelTypesListForCreateVehicle(element, data) {
+    data.forEach((fuelType) => {
+        const option = document.createElement("option");
+        option.value = fuelType.id;
+        option.textContent = fuelType.fuelType;
+        element.appendChild(option);
+    });
+}
+
+function getFuelTypesForVehicleCreate() {
+    fetch("http://127.0.0.1:8000/getFuelTypes")
+        .then(response => response.json())
+        .then(data => {
+            createFuelTypesListForCreateVehicle(document.getElementById("fuelTypesForCreateVehicle"), data);
+        });
+}
 
 function createFuelTypesList(container, data) {
     const tableBody = document.getElementById("listOfFuelTypes").getElementsByTagName("tbody")[0];
@@ -21,10 +53,21 @@ function createFuelTypesList(container, data) {
         const row = tableBody.insertRow();
         const idCell = row.insertCell();
         const fuelTypeCell = row.insertCell();
+        const vehiclesCell = row.insertCell();
         const actionCell = row.insertCell();
 
         idCell.innerHTML = fuelType.id;
         fuelTypeCell.innerHTML = fuelType.fuelType;
+        vehiclesCell.innerHTML = fuelType.vehicles.length;
+        fuelTypeCell.innerHTML = fuelType.fuelType;
+
+        const detailButton = document.createElement("button");
+        detailButton.type = "button";
+        detailButton.className = "btn btn-secondary";
+        detailButton.innerHTML = "More";
+        detailButton.onclick = function () {
+            getFuelType(fuelType.id);
+        };
 
         const updateButton = document.createElement("button");
         updateButton.type = "button";
@@ -41,31 +84,21 @@ function createFuelTypesList(container, data) {
         deleteButton.onclick = function () {
             deleteFuelType(fuelType.id);
         };
-
+        actionCell.appendChild(detailButton);
         actionCell.appendChild(updateButton);
         actionCell.appendChild(deleteButton);
     });
 }
 
 function getFuelTypes() {
-    fetch("http://127.0.0.1:8000/getFuelTypes")
+    fetch("http://127.0.0.1:8000/getFuelTypesWithRelations")
         .then(response => response.json())
         .then(data => {
             createFuelTypesList(document.getElementById("listOfFuelTypes"), data);
         });
 }
 
-function getFuelType(form) {
-    if (!(form instanceof HTMLFormElement)) {
-        console.error("Invalid form element:", form);
-        return;
-    }
-    let formData = {};
-    const inputs = form.querySelectorAll('input');
-    inputs.forEach(input => {
-        formData[input.id] = input.value;
-    });
-    const fuelTypeId = formData.fuelTypeIdInput;
+function getFuelType(fuelTypeId) {
     fetch(`http://127.0.0.1:8000/getFuelType?id=${fuelTypeId}`, {
         method: "GET",
         headers: {

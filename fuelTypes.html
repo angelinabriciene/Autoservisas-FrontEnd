@@ -14,7 +14,7 @@
     <div class="container">
         <div id="header">
             AUTOSERVISAS.LT
-            menu: <a href="./index.html">automobiliai</a>
+            menu: <a href="./vehicles.html">automobiliai</a>
         </div>
         <form id="fuelForm">
             <div>Sukurti įrašą</div>
@@ -28,6 +28,7 @@
                 <tr>
                     <th scope="col">ID</th>
                     <th scope="col">Fuel type</th>
+                    <th scope="col">Vehicles</th>
                     <th scope="col">Actions</th>
                 </tr>
             </thead>
@@ -35,21 +36,14 @@
             </tbody>
         </table>
         <form id="editFuelTypeForm">
-            
+
         </form>
-        <form id="OneFuelTypeForm">
-            <div>Ieškoti pagal</div>
-            <div class="form-group" id="getFuelTypeForm">
-                <label for="ID">ID</label>
-                <input type="text" class="form-control" id="fuelTypeIdInput" placeholder="ID">
-            </div>
-        </form>
-        <button type="button" class="btn btn-success" id="getFuelType">Submit</button>
         <div class="card" id="fuelTypeCard">
             <div class="card-body">
 
             </div>
         </div>
+        <div id="getFuelType"></div>
     </div>
 </body>
 

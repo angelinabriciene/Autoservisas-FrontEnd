@@ -28,3 +28,10 @@ td {
 #fuelForm {
     margin-top: 50px;
 }
+.btn-primary {
+    margin-left: 20px;
+}
+
+.btn-danger {
+    margin-left: 20px;
+}

@@ -28,3 +28,19 @@ td {
 #vehicleForm {
     margin-top: 30px;
 }
+
+.btn-primary {
+    margin-left: 20px;
+}
+
+.btn-danger {
+    margin-left: 20px;
+}
+
+#dropdownFuelTypeButton {
+    width: 100%;
+}
+
+#submitNewVehicle{
+    margin-top: 20px;
+}

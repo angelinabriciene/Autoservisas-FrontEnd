@@ -44,3 +44,12 @@ td {
 #submitNewVehicle{
     margin-top: 20px;
 }
+
+#filter-container {
+    margin-top: 20px;
+}
+
+#vehicleCard {
+    background-color: rgb(218, 228, 225);
+    margin-top: 20px;
+}

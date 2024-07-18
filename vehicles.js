@@ -6,11 +6,17 @@ function showAlert(message) {
     alert(message);
 }
 
+const filterContainer = document.getElementById('filter-container');
+const applyFilterButton = document.getElementById('apply-filter');
+const vehicleListTable = document.getElementById('listOfVehicles');
+
+applyFilterButton.addEventListener('click', applyFilter);
+
 getVehicles();
 getFuelTypesForVehicleCreate();
 
 function createVehicleList(container, data) {
-    const tableBody = document.getElementById("listOfVehicles").getElementsByTagName("tbody")[0];
+    const tableBody = container.getElementsByTagName("tbody")[0];
     tableBody.innerHTML = "";
 
     data.forEach(vehicle => {
@@ -76,8 +82,11 @@ function getVehicle(vehicleId) {
             cardBody.innerHTML = "";
 
             const vehicleHTML = `
-                <h1 class="card-title">${data.manufacturer} ${data.model} ${data.releaseYear} ${data.fuelType.fuelType}</h1>`;
+                <h1 class="card-title">${data.manufacturer} ${data.model} ${data.releaseYear} ${data.fuelType.fuelType}</h1>
+                <h5>Kliento kontaktai:</h5>
+                <h5>Darbų sąrašas:</h5>`;
             cardBody.innerHTML = vehicleHTML;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         })
         .catch(error => {
             console.error("Error getting vehicle:", error);
@@ -93,7 +102,7 @@ function createVehicle(form) {
 
     let formData = {};
     const inputs = form.querySelectorAll('input');
-    const fuelTypeSelect = form.querySelector('select'); 
+    const fuelTypeSelect = form.querySelector('select');
 
     inputs.forEach(input => {
         formData[input.id] = input.value;
@@ -211,5 +220,35 @@ function updateVehicle(vehicleId) {
         .catch(error => {
             console.error("Error getting vehicle:", error);
             showAlert("Klaida: negalima gauti įrašo");
+        });
+}
+
+function applyFilter() {
+    const manufacturerFilter = document.getElementById('manufacturer-filter').value;
+    const modelFilter = document.getElementById('model-filter').value;
+    const yearFilter = document.getElementById('year-filter').value;
+    const fuelTypeFilter = document.getElementById('fuel-type-filter').value;
+
+    const filters = {
+        manufacturer: manufacturerFilter,
+        model: modelFilter,
+        year: yearFilter,
+        fuelType: fuelTypeFilter
+    };
+
+    fetch(`http://127.0.0.1:8000/getVehiclesWithFilter`, {
+        method: "POST",
+        body: JSON.stringify(filters),
+        headers: {
+            "Content-Type": "application/json"
+        }
+    })
+        .then(response => response.json())
+        .then(data => {
+            createVehicleList(document.getElementById("listOfVehicles"), data);
+        })
+        .catch(error => {
+            console.error("Error applying filter:", error);
+            showAlert("Klaida: negalima pritaikyti filtro");
         });
 }

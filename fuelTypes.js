@@ -99,25 +99,34 @@ function getFuelTypes() {
 }
 
 function getFuelType(fuelTypeId) {
-    fetch(`http://127.0.0.1:8000/getFuelType?id=${fuelTypeId}`, {
+    fetch(`http://127.0.0.1:8000/getFuelTypesWithRelation?id=${fuelTypeId}`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json"
         }
     })
-        .then(response => response.json())
-        .then(data => {
-            const cardBody = document.getElementById("fuelTypeCard").getElementsByClassName("card-body")[0];
-            cardBody.innerHTML = "";
+    .then(response => response.json())
+    .then(data => {
+        const cardBody = document.getElementById("fuelTypeCard").getElementsByClassName("card-body")[0];
+        cardBody.innerHTML = "";
 
-            const fuelTypeHTML = `
-                <h1 class="card-title">${data.fuelType}</h1>`;
+        if (data && data.fuelType && data.vehicles) {
+            let fuelTypeHTML = `<h1 class="card-title">${data.fuelType}</h1>`;
+            data.vehicles.forEach(vehicle => {
+                fuelTypeHTML += `
+                    <p>${vehicle.manufacturer} ${vehicle.model} (${vehicle.releaseYear})</p>
+                `;
+            });
+
             cardBody.innerHTML = fuelTypeHTML;
-        })
-        .catch(error => {
-            console.error("Error getting fuel type:", error);
-            showAlert("Klaida: negalima gauti įrašo");
-        });
+        } else {
+            cardBody.innerHTML = "<p>No data available for the specified fuel type.</p>";
+        }
+    })
+    .catch(error => {
+        console.error("Error getting fuel type:", error);
+        showAlert("Error: Unable to retrieve record");
+    });
 }
 
 function createFuelType(form) {
